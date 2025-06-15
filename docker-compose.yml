@@ -1,0 +1,23 @@
+version: '3.9'
+
+services:
+  ollama:
+    image: ollama/ollama
+    container_name: ollama-gemma-gpu
+    ports:
+      - "11434:11434"
+    environment:
+      - OLLAMA_ENABLE_CUDA=1
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+    entrypoint: >
+      sh -c "
+        ollama serve &
+        sleep 5 &&
+        ollama pull gemma:2b &&
+        wait
+      "
+    restart: unless-stopped
